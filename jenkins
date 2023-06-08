@@ -1,0 +1,7 @@
+ #base image
+ From openjdk:17
+ copy . /src/java
+ WORKDIR src/java
+ Run ["javac","primenumber.java"]
+ entrypoint["java","primenumber.java"]
+ 
