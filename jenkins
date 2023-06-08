@@ -1,7 +1,37 @@
- #base image
- From openjdk:17
- copy . /src/java
- WORKDIR src/java
- Run ["javac","primenumber.java"]
- entrypoint["java","primenumber.java"]
- 
+ pipeline
+{
+  environment
+  {
+    registry = "avantikamanekar/demoimage"
+    registryCredential = 'dockerid'
+    dockerImage = ''
+  }
+agent any
+
+stages
+{
+  stage('Build image')
+  {
+    steps
+    {
+      script
+      {
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+      }
+    }
+  }
+  stage('Deploy the image')
+  {
+    steps
+    {
+      script
+      {
+          docker.withRegistry( '',registryCredential )
+          {
+            dockerImage.push()
+          }
+      }
+    }
+  }
+}
+}
